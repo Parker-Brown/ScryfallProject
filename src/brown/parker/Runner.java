@@ -25,9 +25,9 @@ public class Runner {
 		manifest.init();
 		/*
 		 * Main Loop: 
-		 * 	1. search (DONE)
+		 * 	1. search 
 		 * 	2. view tags
-		 * 	3. quit (DONE)
+		 * 	3. quit
 		 */
 		while(true) {
 			printMainMenu();
@@ -35,7 +35,6 @@ public class Runner {
 			switch(getInteger(1,3)) {
 				//***********************Search********************************
 				case 1: 
-					System.out.println();
 					if(search()) {
 						System.out.println();
 						initializeFoundCards();
@@ -43,13 +42,13 @@ public class Runner {
 						while(parser.getHasMore()) {
 							//don't spam server with requests or you get banned
 							Thread.sleep(100);
-							System.out.println("Percent completed: " + (float) foundCards.size() / parser.getTotalCards()); 
+							float percent = 100 * ((float) foundCards.size() / parser.getTotalCards());
+							System.out.printf("Percent completed: %.2f%%%n" , percent); 
 							getNextPage();
 							initializeFoundCards();
 						}
 						parser.resetPageNumber();
-						System.out.println("\n");
-						
+							
 						//***********************************Select after Search******************************
 						printCardSelectMenu();
 						int input = getInteger(0,foundCards.size());
@@ -57,6 +56,9 @@ public class Runner {
 							selectCard(input);
 							printCardOptions();
 							modifyCard();
+						}
+						else {
+							System.out.println();
 						}
 						
 						//I could cache results if same search used multiple times, 
@@ -86,25 +88,25 @@ public class Runner {
 	//****************************Searching Helper Functions************************************
 	
 	/*
-	 * returns true if user wanted to search, else false
+	 * returns true if search successful, else false
 	 */
 	private static boolean search() {
-		boolean searched = false;
 		ScryfallConnection connection = new ScryfallConnection();
-		System.out.print("Enter a string to search for or press q to quit: ");
+		System.out.print("\nEnter a string to search for or press q to quit: ");
 		String query = userInput.nextLine();
 		
 		if(!query.equalsIgnoreCase("q")){
 			lastGETResult = connection.search(query, false);
 			if(lastGETResult == null) {
-				search();
+				return false;
 			}
 			else {
 				parser.setInput(lastGETResult, true);
+				return true;
 			}
-			searched = true;
 		}
-		return searched;
+		
+		return false;
 	}
 	
 	private static void getNextPage() {
@@ -204,7 +206,7 @@ public class Runner {
 					System.out.println("\nPrice data unavailable\n");
 				}
 				else {
-					System.out.println("\nPrice: " + selectedCard.getPrice() + "\n");
+					System.out.println("\nPrice: $ " + selectedCard.getPrice() + "\n");
 				}
 				
 				printCardOptions();
@@ -244,10 +246,11 @@ public class Runner {
 			for(int i = 0 ; i < tags.size();i++) {
 				System.out.println(i+1 + ". " + tags.get(i));
 			}
-			System.out.print("Choose a tag or press 0 to go back: ");
+			System.out.print("\nChoose a tag or press 0 to go back: ");
 			int input = getInteger(0,tags.size());
+			
+			System.out.println();
 			if(input == 0) {
-				System.out.println();
 				return;
 			}
 			else {
@@ -270,7 +273,7 @@ public class Runner {
 	
 	private static void removeTag() {
 		if(selectedCard.getTags().size() == 0) {
-			System.out.print("The selected card has no tags.");
+			System.out.print("\nThe selected card has no tags.\n\n");
 		}
 		else {
 			printTags();

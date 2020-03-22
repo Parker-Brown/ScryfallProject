@@ -1,7 +1,37 @@
 Debug Case Test Log
 
-Search:
+Search: The following test searches are consistent with Scryfall behavior
+	- Comma: "Urborg, Tomb of Yawgmoth"
+	- Split cards: "find finality"
+	- Double sided cards: "insectile aberration"
+	- Large Searches: "t a c o"    (returns all cards with all letters in name)
+	- Escape Characters: "\n\tsnap" 
+	- Recovery from failed searches: "failed search 1"    
+	
+Search -> Select:
+	- search but don't select
+	 
+Modify -> Check Price:
+	-with and without price data available	
 
-Select:
+Modify -> Add Tag:	
+	-escape characters ""\n""
+	-empty tag ""  (sure, why not?)
+	-adding duplicate tag 
+	-cards with comma: "Tatyova, Benthic Druid"
+	-add multiple tags to one card
+	
+Modify -> Remove Tag:
+	-remove last instance of tag
+	-remove one from many
+	
+Manifest: 
+	-included are text files "card draw" , "ramp", and "lands matter", read in at start
+	-adding and removing cards via tags (see above)
 
-Tags:
+Fixes:
+	-Odd spacing if searches failed
+	-if quitting after failed search program would still ask to select a card
+	-spacing consistency (new line between menus, input, and results)
+	-adding tags always added to the first tag file in the array
+	-removal removed from internal array but not file

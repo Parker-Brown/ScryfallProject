@@ -91,7 +91,7 @@ public class ScryfallConnection {
 		}
 		else {
 			System.out.println("No searches matched that name.\n");
-			return null;			//stop complaining compiler
+			return null;
 		}
 	}
 	

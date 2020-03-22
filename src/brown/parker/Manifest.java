@@ -2,12 +2,9 @@ package brown.parker;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 /*
@@ -32,7 +29,7 @@ public class Manifest {
 	//adds a tag to a card 
 	public void addTag(Card card, String tag) {
 		if(card.getTags().contains(tag)) {
-			System.out.println("The selected card already has that tag.");
+			System.out.println("The selected card already has that tag.\n");
 		}
 		else {
 			card.addTag(tag);
@@ -45,6 +42,7 @@ public class Manifest {
 				cards.remove(card);		//since equals method checks card name only it will remove old card data
 				cards.add(card);
 			}
+			
 			if(!tags.contains(tag)) {
 				tags.add(tag);
 			}
@@ -56,8 +54,11 @@ public class Manifest {
 		card.removeTag(tag);
 		boolean last = true;
 		for(int i = 0 ; i < cards.size(); i++) {
-			for(int j = 0 ; j < cards.get(i).getTags().size(); j++) {
-				if(cards.get(i).getTags().get(j).equals(tag)) {
+			Card currentCard = cards.get(i);
+			ArrayList<String> currentTags = currentCard.getTags();
+			
+			for(int j = 0 ; j < currentTags.size(); j++) {
+				if(currentTags.get(j).equals(tag)) {
 					last = false;
 				}
 			}
@@ -86,7 +87,7 @@ public class Manifest {
 		manifest = new File(TAG_LIST);
 		try {
 			if(manifest.exists()) {
-				//only read if the file existed prior to, else create it
+				//only read if the file existed prior to running program
 				
 				BufferedReader br = new BufferedReader(new FileReader(manifest));
 				String input = br.readLine();
@@ -116,17 +117,12 @@ public class Manifest {
 					createCard(currentString, tags.get(i));
 					currentString = br.readLine();
 				}
+				br.close();
 			} catch (IOException e1) {
 				System.out.println("couldn't find a corresponding data file");
 				System.exit(1);
 			}
 		}
-		
-		/*
-		for(int i = 0 ; i < cards.size();i++) {
-			System.out.println(cards.get(i));
-		}
-		*/
 		
 	}//init	
 	
@@ -138,27 +134,39 @@ public class Manifest {
 	 * easier to program and should work for my uses (I will flush the data occasionally to keep the overhead low)
 	 */
 	public void save() {
+		
 		if(cards.size() > 0){
-			FileWriter[] writers = new FileWriter[tags.size()+1];
+			ArrayList<FileWriter> writers = new ArrayList<FileWriter>();
+			FileWriter taglist = null;
 			try {
-				writers[tags.size()] = new FileWriter(TAG_LIST);
+				taglist = new FileWriter(TAG_LIST);
 				
 				for(int i = 0 ; i < tags.size(); i++) {
-					writers[i] = new FileWriter(tags.get(i) + ".txt");	
-					writers[tags.size()].write(tags.get(i) + ",");
+					writers.add(new FileWriter(tags.get(i) + ".txt"));	
+					taglist.write(tags.get(i) + ",");
 				}
 				
 				//for each card
 				for(int i = 0 ; i < cards.size(); i++) {
-					//for each tag
-					for(int j = 0 ; j < cards.get(i).getTags().size(); j++) {
-						writers[j].write(cards.get(i).getName() + "\n");
+					Card currentCard = cards.get(i);
+					ArrayList<String> currentTags = currentCard.getTags();
+					
+					for(int j = 0 ; j < currentTags.size(); j++) {
+						String currentTag = currentTags.get(j);
+						
+						for(int k = 0 ; k < tags.size(); k++) {
+							if(currentTag.equals(tags.get(k))){
+								writers.get(k).write(currentCard.getName() + "\n");
+								break;	//don't bother with rest of tags, we found the match
+							}
+						}
 					}
 				}
 				
-				for(int i = 0 ; i < writers.length ; i++) {
-					writers[i].close();
+				for(int i = 0 ; i < writers.size() ; i++) {
+					writers.get(i).close();
 				}
+				taglist.close();
 				
 			} catch (IOException e) {
 				System.out.println("ERROR: could not save");
