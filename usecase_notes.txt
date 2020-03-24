@@ -1,0 +1,60 @@
+Search: user prompted to enter a string which becomes the text query in a GET request.
+
+	example: Enter a string or q to quit: fire
+
+	-request string becomes: "https://api.scryfall.com/cards/search?q=fire"
+	-once the request has been processed, the user can select from the list of cards
+	
+
+Select:	user prompted to select a card from a list by typing a corresponding integer.
+
+	example: 
+		1. Akoum Firebird
+		2. Amplifire
+		3. Annihilating Fire
+
+		choose a card or press q to quit: 2
+
+	-entering an integer will select the card, allowing for more options
+	and opening an image of the card.  options: 
+		a. add tag
+		b. remove tag
+		c. price check
+	-quitting returns to main menu (search/view tags)
+
+Display Image: opens a window with a picture of the card, retrieved via another GET request.
+
+Save to File (add tag): user prompted for string to tag card with. 
+	if string unused, create new text file, and add card name, else append card name.
+	
+Remove from File (remove tag): lists tags on card and allows user to remove by selecting integer.
+	example: 
+		1. creatures
+		2. card draw
+		
+		select a tag to remove: creatures
+
+Price check: prints the price from tcg-player 
+
+view tag: displays a list of tags based on files present (loaded from manifest)
+	example: 
+		1. brago edh
+		2. ramp	
+		3. cool cards
+		
+		Select a tag: ramp
+		
+		1. rampant growth
+		2. harrow
+		
+		choose a card or press q to quit:
+
+
+challenges: 
+	-perform queries in Java to the hosted API
+		a. retrieving an image from the API
+	-load cards user has saved at program start
+		a. requires api calls to update price data of card objects
+			-stretch goal: add price deltas from last load
+	-parse JSON data that calls return (hasmore = true)
+	
